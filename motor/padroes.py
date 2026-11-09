@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Padrao:
+    """Expressão e regra de fronteira; a ordem define a prioridade nos empates."""
+
     nome: str
     expressao: str
     fronteira_numerica: bool = False

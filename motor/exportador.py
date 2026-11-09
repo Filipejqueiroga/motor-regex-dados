@@ -6,6 +6,7 @@ from motor.tokenizador import Token
 
 
 def exportar_json(tokens: list[Token]) -> str:
+    """Preserva a ordem das ocorrências por tipo; documento não validado usa null."""
     grupos = {}
     for token in tokens:
         dados = {"texto": token.texto, "inicio": token.inicio, "fim": token.fim}

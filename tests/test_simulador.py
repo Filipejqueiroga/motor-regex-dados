@@ -42,6 +42,14 @@ def test_passos_incluem_travamento(afd):
     assert passos(afd, "") == []
 
 
+def test_estado_inicial_nao_zero_e_aceitacao_no_estado_zero():
+    afd = AFD(num_estados=2, inicial=1, transicoes={1: [((97, 97), 0)]}, aceitacao={0: 0})
+    assert aceita(afd, "a")
+    assert not aceita(afd, "")
+    assert maior_casamento(afd, "!ab", 1) == (2, 0)
+    assert passos(afd, "ab") == [(1, "a", 0), (0, "b", None)]
+
+
 def test_busca_em_intervalos_disjuntos_unicode():
     afd = AFD(num_estados=2, transicoes={0: [((48, 57), 1), ((97, 122), 1), ((231, 231), 1)]}, aceitacao={1: 0})
     for simbolo in "09azç":

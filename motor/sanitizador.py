@@ -4,6 +4,7 @@ from motor.tokenizador import Token
 
 
 def sanitizar(texto: str, tokens: list[Token], regras: dict[str, str]) -> str:
+    """Consome tokens ordenados e sem sobreposição; tipos sem regra usam rótulo."""
     trechos = []
     inicio = 0
     for token in tokens:

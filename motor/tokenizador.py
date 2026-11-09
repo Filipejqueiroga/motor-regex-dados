@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Iterable
 
 from motor.automatos import AFN, EPSILON
@@ -13,6 +13,8 @@ from motor.simulador import maior_casamento
 
 @dataclass
 class Token:
+    """Ocorrência com índices de caracteres: texto_original[inicio:fim]."""
+
     tipo: str
     texto: str
     inicio: int
@@ -21,12 +23,23 @@ class Token:
 
 
 class Tokenizador:
+    """Compila os padrões; PERSONALIZADO tem prioridade e não exige fronteira.
+
+    O pipeline usa construir_afn(arvore, id_token), construir_afd(afn) e
+    minimizar(afd), fornecidos pela Task 2. A interface pode acessar afd para
+    executar passos e usa validar_documentos após tokenizar.
+    """
+
     def __init__(self, padroes: Iterable[Padrao]):
         from motor.minimizacao import minimizar
         from motor.subconjuntos import construir_afd
         from motor.thompson import construir_afn
 
-        self.padroes = tuple(padroes)
+        self.padroes = tuple(
+            replace(padrao, fronteira_numerica=False)
+            if padrao.nome == "PERSONALIZADO" else padrao
+            for padrao in sorted(padroes, key=lambda p: p.nome != "PERSONALIZADO")
+        )
         afn = AFN(num_estados=1)
         for id_token, padrao in enumerate(self.padroes):
             parte = construir_afn(parse(padrao.expressao), id_token)
@@ -41,6 +54,11 @@ class Tokenizador:
         self.afd = minimizar(construir_afd(afn))
 
     def tokenizar(self, texto: str) -> list[Token]:
+        """Retorna tokens ordenados, sem sobreposição e com fim exclusivo.
+
+        A validação aritmética é um pós-processamento explícito; os tokens
+        retornados têm digitos_validos=None.
+        """
         tokens = []
         inicio = 0
         while inicio < len(texto):
