@@ -137,6 +137,7 @@ class _Parser:
     def __init__(self, padrao: str):
         self.padrao = padrao
         self.pos = 0
+        self.profundidade = 0
 
     # -- utilidades ---------------------------------------------------------
 
@@ -195,18 +196,24 @@ class _Parser:
         inicio = self.pos
 
         if caractere == "(":
-            self.pos += 1
-            if self.atual() == "?":
-                raise self.erro(
-                    "lookahead, lookbehind e grupos especiais '(?...)' não são "
-                    "suportados: não descrevem linguagens regulares neste motor",
-                    inicio,
-                )
-            no, tamanho = self.uniao()
-            if self.atual() != ")":
-                raise self.erro("'(' sem ')' correspondente", inicio)
-            self.pos += 1
-            return no, tamanho
+            self.profundidade += 1
+            if self.profundidade > 200:
+                raise self.erro("grupos aninhados em excesso", inicio)
+            try:
+                self.pos += 1
+                if self.atual() == "?":
+                    raise self.erro(
+                        "lookahead, lookbehind e grupos especiais '(?...)' não são "
+                        "suportados: não descrevem linguagens regulares neste motor",
+                        inicio,
+                    )
+                no, tamanho = self.uniao()
+                if self.atual() != ")":
+                    raise self.erro("'(' sem ')' correspondente", inicio)
+                self.pos += 1
+                return no, tamanho
+            finally:
+                self.profundidade -= 1
 
         if caractere == "[":
             return Classe(self.classe()), 1
