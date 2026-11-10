@@ -1,0 +1,18 @@
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+
+[theme]
+base = "light"
+primaryColor = "#14182B"
+backgroundColor = "#F1F3F8"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#14182B"
+borderColor = "#B9C0D3"
+showWidgetBorder = true
+baseRadius = "none"
+baseFontSize = 17
+font = "'Atkinson Hyperlegible':https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"
